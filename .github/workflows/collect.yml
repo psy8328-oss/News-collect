@@ -1,0 +1,50 @@
+# 매일 07:00 KST 뉴스 자동 수집 (PRD F-03, 8장)
+name: 매일 뉴스 수집
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # UTC 22:00 = KST 07:00 (GitHub 사정으로 수 분~수십 분 늦을 수 있음)
+  workflow_dispatch:         # Actions 탭에서 수동 실행
+
+permissions: {}             # 기본은 권한 없음. 필요한 권한은 job에서만 준다 (4단계 검토 #13)
+
+concurrency:
+  group: collect-news        # 두 번 겹쳐 실행되지 않게
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write        # data/ 변경분을 커밋·푸시하기 위해 필요
+    steps:
+      # 액션은 태그가 아니라 커밋 SHA로 고정한다 (태그가 바뀌어도 같은 코드가 돌도록)
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 뉴스 수집
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: python -m core.collector
+
+      - name: 수집 결과 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "변경된 수집 결과가 없어 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "data: $(TZ=Asia/Seoul date +%Y-%m-%d) 뉴스 수집"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
