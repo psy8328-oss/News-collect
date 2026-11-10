@@ -1,0 +1,22 @@
+# 비밀 정보 (API 키)
+.streamlit/secrets.toml
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Playwright 검증 산출물
+.playwright-mcp/
+
+# 저장 중 비정상 종료 시 남는 임시 파일 (4단계 검토 #14)
+*.tmp
