@@ -1,0 +1,31 @@
+# 화면 테마 (PRD 3단계: 차분한 업무용 톤 — 철강 느낌의 진한 남색·회색)
+# 라이트/다크를 둘 다 정의해 두면, 사용자가 오른쪽 위 메뉴 > Settings 에서 바꿀 수 있다.
+
+[server]
+runOnSave = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+font = "sans-serif"
+baseRadius = "0.5rem"
+buttonRadius = "0.5rem"
+showSidebarBorder = true
+linkUnderline = false
+
+[theme.light]
+primaryColor = "#1F4E79"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F4F7"
+textColor = "#1B2430"
+linkColor = "#1F4E79"
+borderColor = "#D5DBE3"
+
+[theme.dark]
+primaryColor = "#8AB4E8"
+backgroundColor = "#0F141B"
+secondaryBackgroundColor = "#19212C"
+textColor = "#E4E9F0"
+linkColor = "#9CC2F0"
+borderColor = "#2E3946"
